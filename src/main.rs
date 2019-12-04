@@ -8,20 +8,31 @@ use nom::error::{
 use nom::sequence::terminated;
 use nom::IResult;
 
-type Inp<'a> = &'a str;
-
-fn one_token<'a, E>(input: Inp<'a>) -> IResult<Inp, Inp, E>
+fn one_token<'a, E>(input: &'a str) -> IResult<&str, &str, E>
 where
-    E: ParseError<Inp<'a>>,
+    E: ParseError<&'a str>,
 {
     terminated(is_not(" \t\r\n"), multispace0)(input)
 }
 
-fn str_token<'a, E>(string: String) -> impl Fn(Inp<'a>) -> IResult<Inp, Inp, E>
+fn str_token<'a, E>(expected_string: String) -> impl Fn(&'a str) -> IResult<&str, &str, E>
 where
-    E: ParseError<Inp<'a>>,
+    E: ParseError<&'a str>,
 {
-    verify(one_token, move |s| s == string)
+    verify(one_token, move |actual_string| {
+        actual_string == expected_string
+    })
+}
+
+fn str_token_hrtb<'a, E>(
+    expected_string: String,
+) -> impl for<'b> Fn(&'b str) -> IResult<&str, &str, E>
+where
+    E: ParseError<&'a str>,
+{
+    verify(one_token, move |actual_string| {
+        actual_string == expected_string
+    })
 }
 
 fn main() {
