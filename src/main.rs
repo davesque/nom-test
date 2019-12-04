@@ -24,20 +24,11 @@ where
     })
 }
 
-fn str_token_hrtb<'a, E>(
-    expected_string: String,
-) -> impl for<'b> Fn(&'b str) -> IResult<&str, &str, E>
-where
-    E: ParseError<&'a str>,
-{
-    verify(one_token, move |actual_string| {
-        actual_string == expected_string
-    })
-}
-
 fn main() {
-    println!(
-        "{:?}",
-        str_token::<VerboseError<_>>("foo".into())("foo bar")
-    );
+    let parser_1 = str_token::<VerboseError<_>>("foo".into());
+    let string = "foo bar".to_string();
+    let input = &string[..];
+    let parser_2 = str_token::<VerboseError<_>>("foo".into());
+
+    println!("{:?} {:?}", parser_1(input), parser_2(input),);
 }
