@@ -9,9 +9,9 @@ fn one_token(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
     terminated(is_not(" \t\r\n"), multispace0)(input)
 }
 
-fn str_token<'a>(
+fn str_token(
     expected_string: String,
-) -> impl Fn(&'a str) -> IResult<&str, &str, VerboseError<&str>> {
+) -> impl for<'a> Fn(&'a str) -> IResult<&str, &str, VerboseError<&str>> {
     verify(one_token, move |actual_string| {
         actual_string == expected_string
     })
